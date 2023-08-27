@@ -5,12 +5,14 @@
             [cheffy.server]))
 
 (ig-repl/set-prep!
-  (fn [] (-> "resources/config.edn" slurp ig/read-string)))
+  (fn [] (-> "resources/config.edn"
+             slurp
+             ig/read-string)))
 
 (def go ig-repl/go)
-(def halt ig-repl/go)
-(def reset ig-repl/go)
-(def reset-all ig-repl/go)
+(def halt ig-repl/halt)
+(def reset ig-repl/reset)
+(def reset-all ig-repl/reset-all)
 
 (defn app [] (-> state/system :cheffy/app))
 (defn db [] (-> state/system :db/postgres))
