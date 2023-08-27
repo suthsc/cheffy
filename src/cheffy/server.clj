@@ -4,7 +4,8 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]))
 
-(def app
+(defn app
+  [env]
   (ring/ring-handler
     (ring/router
       [["/"
