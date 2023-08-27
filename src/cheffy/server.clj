@@ -2,15 +2,13 @@
   (:require [integrant.core :as ig]
             [reitit.ring :as ring]
             [ring.adapter.jetty :as jetty]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [cheffy.router :as router]))
 
 (defn app
   [env]
-  (ring/ring-handler
-    (ring/router
-      [["/"
-        {:get {:handler (fn [req] {:status 200
-                                   :body "Hello World!"})}}]])))
+  (router/routes env)
+  )
 
 (defmethod ig/prep-key :server/jetty
   [_ config]
