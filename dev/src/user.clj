@@ -19,8 +19,12 @@
 
 (comment
 
+  ;; base recipe route
   (app {:request-method :get
         :uri "/v1/recipes"})
+  ;; swagger docs
+  (app {:request-method :get
+        :uri "/swagger.json"})
 
   (go)
   (halt)
