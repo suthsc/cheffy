@@ -11,3 +11,4 @@ pom.xml.asc
 /.prepl-port
 .hg/
 .idea/
+resources/config.edn
