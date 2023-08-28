@@ -2,7 +2,9 @@
   (:require [integrant.repl :as ig-repl]
             [integrant.core :as ig]
             [integrant.repl.state :as state]
-            [cheffy.server]))
+            [cheffy.server]
+            [next.jdbc :as jdbc]
+            [next.jdbc.sql :as sql]))
 
 (ig-repl/set-prep!
   (fn [] (-> "resources/config.edn"
@@ -25,6 +27,9 @@
   ;; swagger docs
   (app {:request-method :get
         :uri "/swagger.json"})
+
+  (jdbc/execute! db ["select * from recipe"])
+  (sql/find-by-keys db :recipe {:public true})
 
   (go)
   (halt)
