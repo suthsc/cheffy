@@ -19,11 +19,29 @@
 (def app (-> state/system :cheffy/app))
 (def db (-> state/system :db/postgres))
 
+(def router
+  (reitit.core/router
+    ["/v1/recipes/:recipe-id"
+     {:coercion reitit.coercion.spec/coercion
+      :parameters {:path {:recipe-id int?}}}]
+    {:compile reitit.coercion/compile-request-coercers}))
+
 (comment
 
+  (reitit.coercion/coerce!
+    (reitit.core/match-by-path router "/v1/recipes/1234"))
   ;; base recipe route
   (app {:request-method :get
-        :uri "/v1/recipes"})
+        :uri "/v1/recipes/1234-recipe"})
+
+  (require '[clojure.pprint :refer [pprint]])
+  (require '[reitit.core])
+  (require '[reitit.coercion])
+  (require '[reitit.coercion.spec])
+  (pprint (macroexpand '(ns coercion
+                          (:require [clojure.pprint :refer [pprint]]))))
+
+
   ;; swagger docs
   (app {:request-method :get
         :uri "/swagger.json"})
