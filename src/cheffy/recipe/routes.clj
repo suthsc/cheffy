@@ -4,7 +4,11 @@
 (defn routes
   [env]
   (let [db (:jdbc-url env)]
-    ["/recipes" {:swagger {:tags ["recipes"]}
-                 :get {:handler (recipe/list-all-recipes db)
-                       :summary "List of recipes"}}])
+    ["/recipes"
+     {:swagger {:tags ["recipes"]}}
+     ["" {:get {:handler (recipe/list-all-recipes db)
+                :summary "List of recipes"}}]
+     ["/:recipe-id"
+      {:get (recipe/retrieve-recipe db)
+       :summary "Retrieve recipe"}]])
   )
