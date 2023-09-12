@@ -19,48 +19,13 @@
 (def app (-> state/system :cheffy/app))
 (def db (-> state/system :db/postgres))
 
-(def router
-  (reitit.core/router
-    ["/v1/recipes/:recipe-id"
-     {:coercion reitit.coercion.spec/coercion
-      :parameters {:path {:recipe-id int?}}}]
-    {:compile reitit.coercion/compile-request-coercers}))
-
 (comment
 
-  (reitit.coercion/coerce!
-    (reitit.core/match-by-path router "/v1/recipes/1234"))
   ;; base recipe route
-  (app {:request-method :get
-        :uri "/v1/recipes/1234-recipe"})
-
-  (require '[clojure.pprint :refer [pprint]])
-  (require '[reitit.core])
-  (require '[reitit.coercion])
-  (require '[reitit.coercion.spec])
-  (pprint (macroexpand '(ns coercion
-                          (:require [clojure.pprint :refer [pprint]]))))
-
-
-  ;; swagger docs
-  (app {:request-method :get
-        :uri "/swagger.json"})
-
-  (jdbc/execute! db ["select * from recipe"])
-  (time
-    (with-open [conn (jdbc/get-connection db)]
-      {:public (sql/find-by-keys conn :recipe {:public true})
-       :drafts (sql/find-by-keys conn :recipe {:public false :uid "auth0|5ef440986e8fbb001355fd9c"})}))
-
-  (with-open [conn (jdbc/get-connection db)]
-    (let [recipe-id "a3dde84c-4a33-45aa-b0f3-4bf9ac997680"
-          [recipe] (sql/find-by-keys conn :recipe {:recipe_id recipe-id})
-          steps (sql/find-by-keys conn :step {:recipe_id recipe-id})
-          ingredients (sql/find-by-keys conn :ingredient {:recipe_id recipe-id})]
-      (when (seq recipe)
-        (assoc recipe
-          :recipe/steps steps
-          :recipe/ingredients ingredients))))
+  (-> (app {:request-method :get
+            :uri "/v1/recipes/1234-recipe"})
+      :body
+      (slurp))
 
   (go)
   (halt)

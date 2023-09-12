@@ -9,6 +9,7 @@
      ["" {:get {:handler (recipe/list-all-recipes db)
                 :summary "List of recipes"}}]
      ["/:recipe-id"
-      {:get (recipe/retrieve-recipe db)
-       :summary "Retrieve recipe"}]])
+      {:get {:handler (recipe/retrieve-recipe db)
+             :parameters {:path {:recipe-id int?}}
+             :summary "Retrieve recipe"}}]])
   )
