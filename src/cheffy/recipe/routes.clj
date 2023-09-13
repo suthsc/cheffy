@@ -1,5 +1,6 @@
 (ns cheffy.recipe.routes
-  (:require [cheffy.recipe.handlers :as recipe]))
+  (:require [cheffy.recipe.handlers :as recipe]
+            [cheffy.responses :as responses]))
 
 (defn routes
   [env]
@@ -7,9 +8,11 @@
     ["/recipes"
      {:swagger {:tags ["recipes"]}}
      ["" {:get {:handler (recipe/list-all-recipes db)
+                :responses {200 {:body responses/recipes}}
                 :summary "List of recipes"}}]
      ["/:recipe-id"
       {:get {:handler (recipe/retrieve-recipe db)
-             :parameters {:path {:recipe-id int?}}
+             :parameters {:path {:recipe-id string?}}
+             :responses {200 {:body responses/recipe}}
              :summary "Retrieve recipe"}}]])
   )
