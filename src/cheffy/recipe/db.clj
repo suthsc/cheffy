@@ -32,4 +32,11 @@
   [db recipe]
   (-> (sql/update! db :recipe recipe (select-keys recipe [:recipe-id]))
       :next.jdbc/update-count
-      pos?))
+      (pos?)))
+
+(defn delete-recipe!
+  [db recipe]
+  (-> (sql/delete! db :recipe recipe)
+      :next.jdbc/update-count
+      (pos?))
+  )
