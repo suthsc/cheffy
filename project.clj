@@ -10,7 +10,8 @@
                  [seancorfield/next.jdbc "1.1.646"]
                  [org.postgresql/postgresql "42.6.0"]
                  [clj-http "3.12.3"]
-                 [ovotech/ring-jwt "1.3.0"]]
+                 [ovotech/ring-jwt "1.3.0"]
+                 [camel-snake-kebab "0.4.3" ]]
   :profiles {:uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
              :dev {:source-paths ["dev/src"]
