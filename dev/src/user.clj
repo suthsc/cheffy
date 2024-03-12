@@ -21,6 +21,8 @@
 
 (comment
 
+  (sql/update! db :recipe {:name "my-recipe"} {:recipe-id "a3dde84c-4a33-45aa-b0f3-4bf9ac997680"})
+
   ;; base recipe route
   (-> (app {:request-method :get
             :uri "/v1/recipes/1234-recipe"})
