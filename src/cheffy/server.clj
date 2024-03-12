@@ -1,21 +1,21 @@
 (ns cheffy.server
-  (:require [integrant.core :as ig]
-            [reitit.ring :as ring]
-            [ring.adapter.jetty :as jetty]
+  (:require [cheffy.router :as router]
             [environ.core :refer [env]]
-            [cheffy.router :as router]))
+            [integrant.core :as ig]
+            [ring.adapter.jetty :as jetty]))
 
 (defn app
   [env]
-  (router/routes env)
-  )
+  (router/routes env))
 
 (defmethod ig/prep-key :server/jetty
   [_ config]
+  (println (str "\n Jetty prep'ed"))
   (merge config {:port (Integer/parseInt (env :port))}))
 
 (defmethod ig/prep-key :db/postgres
   [_ config]
+  (println (str "\n Postgres jdbc url configured"))
   (merge config {:jdbc-url (env :jdbc-database-url)}))
 
 (defmethod ig/init-key :server/jetty

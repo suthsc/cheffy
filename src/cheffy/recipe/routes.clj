@@ -9,10 +9,15 @@
      {:swagger {:tags ["recipes"]}}
      ["" {:get {:handler (recipe/list-all-recipes db)
                 :responses {200 {:body responses/recipes}}
-                :summary "List of recipes"}}]
+                :summary "List of recipes"}
+          :post {:handler (recipe/create-recipe! db)
+                 :parameters {:body {:name string?
+                                     :prep-time number?
+                                     :img string?}}
+                 :responses {201 {:body {:recipe-id string?}}}
+                 :summary "Create recipe"}}]
      ["/:recipe-id"
       {:get {:handler (recipe/retrieve-recipe db)
              :parameters {:path {:recipe-id string?}}
              :responses {200 {:body responses/recipe}}
-             :summary "Retrieve recipe"}}]])
-  )
+             :summary "Retrieve recipe"}}]]))

@@ -23,7 +23,7 @@
           :muuntaja   m/instance
           :middleware [swagger/swagger-feature
                        muuntaja/format-middleware
-                       exception/exception-middleware
+                       #_ exception/exception-middleware
                        coercion/coerce-request-middleware
                        coercion/coerce-response-middleware]}})
 
