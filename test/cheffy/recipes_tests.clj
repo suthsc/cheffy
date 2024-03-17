@@ -8,9 +8,9 @@
 (def recipe-id (atom nil))
 
 (def recipe
-  {:img "https://images.pexels.com/photos/263168/pexels-photo-263168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+  {:img       "https://images.pexels.com/photos/263168/pexels-photo-263168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
    :prep-time 30
-   :name "My Test Recipe"})
+   :name      "My Test Recipe"})
 
 (def update-recipe
   (assoc recipe :public true))
@@ -36,7 +36,15 @@
       (is (= status 201))))
 
   (testing "Update recipe"
-    (let [{:keys [status body]} (ts/test-endpoint :put (str "/v1/recipes/" @recipe-id) {:auth true :body update-recipe})]
+    (let [{:keys [status]} (ts/test-endpoint :put (str "/v1/recipes/" @recipe-id) {:auth true :body update-recipe})]
+      (is (= status 204))))
+
+  (testing "Favorite recipe"
+    (let [{:keys [status]} (ts/test-endpoint :post (str "/v1/recipes/" @recipe-id "/favorite") {:auth true})]
+      (is (= status 204))))
+
+  (testing "Unfavorite recipe"
+    (let [{:keys [status]} (ts/test-endpoint :delete (str "/v1/recipes/" @recipe-id "/favorite") {:auth true})]
       (is (= status 204))))
 
   (testing "Delete recipe"
@@ -47,8 +55,11 @@
 
   (reset! recipe-id "1234-recipe")
   (ts/test-endpoint :post "/v1/recipes" {:auth true :body recipe})
-  (ts/test-endpoint :put "/v1/recipes/f30cd1e7-29ef-4489-aac1-2a563f2fa707" {:auth true
+  (ts/test-endpoint :put "/v1/recipes/ec180cf5-a5a1-4ead-89ba-32e681c0d782" {:auth true
                                                                              :body update-recipe})
   (ts/test-endpoint :delete "/v1/recipes/f30cd1e7-29ef-4489-aac1-2a563f2fa707" {:auth true})
+
+  (ts/test-endpoint :post "/v1/recipes/ec180cf5-a5a1-4ead-89ba-32e681c0d782/favorite" {:auth true})
+  (ts/test-endpoint :delete "/v1/recipes/ec180cf5-a5a1-4ead-89ba-32e681c0d782/favorite" {:auth true})
 
   ())

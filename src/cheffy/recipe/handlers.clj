@@ -18,9 +18,9 @@
           recipe (recipe-db/find-recipe-by-id db recipe-id)]
       (if recipe
         (rr/response recipe)
-        (rr/not-found {:type "recipe-not-found"
+        (rr/not-found {:type    "recipe-not-found"
                        :message "Recipe not found"
-                       :data (str "recipe-id" recipe-id)})))))
+                       :data    (str "recipe-id" recipe-id)})))))
 
 (defn create-recipe! [db]
   (fn [request]
@@ -39,9 +39,9 @@
           update-successful? (recipe-db/update-recipe! db (assoc recipe :recipe-id recipe-id))]
       (if update-successful?
         (rr/status 204)
-        (rr/not-found {:type "recipe-not-found"
+        (rr/not-found {:type    "recipe-not-found"
                        :message "Recipe not found"
-                       :data (str "recipe-id" recipe-id)})))))
+                       :data    (str "recipe-id" recipe-id)})))))
 
 (defn delete-recipe!
   [db]
@@ -51,7 +51,31 @@
           deleted? (recipe-db/delete-recipe! db {:recipe-id recipe-id})]
       (if deleted?
         (rr/status 204)
+        (rr/not-found {:type    "recipe-not-found"
+                       :message "Recipe not found"
+                       :data    (str "recipe-id" recipe-id)}))))
+  )
+
+(defn favorite-recipe!
+  [db]
+  (fn [request]
+    (let [uid (-> request :claims :sub)
+          recipe-id (-> request :parameters :path :recipe-id)
+          favorited? (recipe-db/favorite-recipe! db {:uid uid :recipe-id recipe-id})]
+      (if favorited?
+        (rr/status 204)
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
-                       :data (str "recipe-id" recipe-id)}))))
-  )
+                       :data (str "recipe-id " recipe-id)})))))
+
+(defn unfavorite-recipe!
+  [db]
+  (fn [request]
+    (let [uid (-> request :claims :sub)
+          recipe-id (-> request :parameters :path :recipe-id)
+          deleted? (recipe-db/unfavorite-recipe! db {:uid uid :recipe-id recipe-id})]
+      (if deleted?
+        (rr/status 204)
+        (rr/not-found {:type "recipe-not-found"
+                       :message "Recipe not found"
+                       :data (str "recipe-id " recipe-id)})))))

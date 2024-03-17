@@ -36,14 +36,11 @@
                  :responses  {204 {:body nil?}}
                  :summary    "Delete recipe"}}]
       ["/favorite"
-       {:post   {:handler    (recipe/delete-recipe! db)
-                 :middleware [[mw/wrap-recipe-owner db]]
-                 :parameters {:path {:recipe-id string?}
-                              :body {:name string? :prep-time int? :public boolean? :img string?}}
-                 :responses  {204 {:body nil?}}
-                 :summary    "Update Recipe"}
-        :delete {:handler    (recipe/delete-recipe! db)
-                 :middleware [[mw/wrap-recipe-owner db]]
+       {:post   {:handler    (recipe/favorite-recipe! db)
                  :parameters {:path {:recipe-id string?}}
                  :responses  {204 {:body nil?}}
-                 :summary    "Delete recipe"}}]]]))
+                 :summary    "Favorite Recipe"}
+        :delete {:handler    (recipe/unfavorite-recipe! db)
+                 :parameters {:path {:recipe-id string?}}
+                 :responses  {204 {:body nil?}}
+                 :summary    "Unfavorite recipe"}}]]]))
