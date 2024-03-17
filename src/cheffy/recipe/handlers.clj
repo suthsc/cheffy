@@ -34,6 +34,7 @@
   [db]
   (fn [request]
     (let [recipe-id (-> request :parameters :path :recipe-id)
+          uid (-> request :claims :sub)
           recipe (-> request :parameters :body)
           update-successful? (recipe-db/update-recipe! db (assoc recipe :recipe-id recipe-id))]
       (if update-successful?
@@ -46,6 +47,7 @@
   [db]
   (fn [request]
     (let [recipe-id (-> request :parameters :path :recipe-id)
+          uid (-> request :claims :sub)
           deleted? (recipe-db/delete-recipe! db {:recipe-id recipe-id})]
       (if deleted?
         (rr/status 204)
