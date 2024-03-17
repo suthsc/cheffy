@@ -1,5 +1,5 @@
 (ns cheffy.recipes-tests
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [cheffy.server :refer :all]
             [cheffy.test-system :as ts]))
 
