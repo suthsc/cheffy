@@ -1,6 +1,7 @@
 (ns cheffy.middleware
   (:require [cheffy.recipe.db :as recipe-db]
-            [ring.middleware.jwt :as jwt]))
+            [ring.middleware.jwt :as jwt]
+            [ring.util.response :as rr]))
 
 (def wrap-auth0
   {:name ::auth0

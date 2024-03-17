@@ -1,7 +1,9 @@
 (ns cheffy.recipes-tests
-  (:require [clojure.test :refer [deftest testing is]]
+  (:require [clojure.test :refer [deftest testing is use-fixtures]]
             [cheffy.server :refer :all]
             [cheffy.test-system :as ts]))
+
+(use-fixtures :once ts/token-fixture)
 
 (def recipe-id (atom nil))
 
