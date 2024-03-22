@@ -11,7 +11,7 @@
                                   :jwk-endpoint "https://dev-gnzt0rrur86ghxqh.us.auth0.com/.well-known/jwks.json"}))})
 (def wrap-recipe-owner
   {:name ::recipe-owner
-   :description "Middleware to check if a requestor is a recipe owner"
+   :description "Middleware to check if a requester is a recipe owner"
    :wrap (fn [handler db]
            (fn [request]
              (let [uid (-> request :claims :sub)

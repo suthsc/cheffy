@@ -1,14 +1,25 @@
 (ns cheffy.recipe.db
-  (:require [clojure.string :as str]
+  (:require [clojure.pprint :as pp]
+            [clojure.string :as str]
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]))
+
+(defn- find-steps-for-recipe
+  [conn recipe]
+  (pp/pprint {:conn conn :recipe recipe})
+  (when-let [steps (sql/find-by-keys conn :step (select-keys recipe [:recipe-id])
+                                     {:order-by :sort})]
+    (assoc recipe :recipe/steps steps)))
 
 (defn find-all-recipes
   [db uid]
   (with-open [conn (jdbc/get-connection db)]
-    (let [public (sql/find-by-keys conn :recipe {:public true})]
+    (let [public (->> (sql/find-by-keys conn :recipe {:public true})
+                      (map #(find-steps-for-recipe conn %)))]
+      (pp/pprint public)
       (if uid
-        (let [drafts (sql/find-by-keys conn :recipe {:public false :uid uid})]
+        (let [drafts (->> (sql/find-by-keys conn :recipe {:public false :uid uid})
+                          (map #(find-steps-for-recipe conn %)))]
           {:public public
            :drafts drafts})
         {:public public}))))
@@ -54,5 +65,21 @@
   (-> (jdbc/with-transaction [tx db]
                              (sql/delete! tx :recipe-favorite data (:options db))
                              (jdbc/execute-one! tx ["UPDATE recipe SET favorite_count = favorite_count - 1 WHERE recipe_id = ?" recipe-id]))
+      :next.jdbc/update-count
+      (pos?)))
+
+(defn insert-step!
+  [db step]
+  (sql/insert! db :step step))
+
+(defn update-step!
+  [db step]
+  (-> (sql/update! db :step step (select-keys step [:recipe-id :step-id]))
+      :next.jdbc/update-count
+      (pos?)))
+
+(defn delete-step!
+  [db step]
+  (-> (sql/delete! db :step step)
       :next.jdbc/update-count
       (pos?)))
