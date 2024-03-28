@@ -111,3 +111,33 @@
         (rr/not-found {:type    "step-not-found"
                        :message "Step not found"
                        :data    (format "recipe-id %s, step-id: %s" recipe-id step-id)})))))
+
+(defn create-ingredient!
+  [db]
+  (fn [request]
+    (let [recipe-id (-> request :parameters :path :recipe-id)
+          ingredient-id (str (UUID/randomUUID))
+          ingredient (-> request :parameters :body)]
+      (recipe-db/insert-ingredient! db (assoc ingredient :recipe-id recipe-id :ingredient-id ingredient-id))
+      (rr/created (str responses/base-url "/recipies/" recipe-id "/ingredient") {:ingredient-id ingredient-id}))))
+
+(defn update-ingredient! [db]
+  (fn [request]
+    (let [{:keys [recipe-id ingredient-id]} (-> request :parameters :path)
+          ingredient (-> request :parameters :body)
+          update-successful? (recipe-db/update-ingredient! db (assoc ingredient :recipe-id recipe-id :ingredient-id ingredient-id))]
+      (if update-successful?
+        (rr/status 204)
+        (rr/not-found {:type "ingredient-not-found"
+                       :message "Ingredient not found"
+                       :data (format "recipe-id: %s, ingredient-id: %s" recipe-id ingredient-id)})))))
+
+(defn delete-ingredient! [db]
+  (fn [request]
+    (let [{:keys [recipe-id ingredient-id]} (-> request :parameters :path)
+          delete-successful? (recipe-db/delete-ingredient! db {:recipe-id recipe-id :ingredient-id ingredient-id})]
+      (if delete-successful?
+        (rr/status 204)
+        (rr/not-found {:type "ingredient-not-found"
+                       :message "Ingredient not found"
+                       :data (format "recipe-id: %s, ingredient-id: %s" recipe-id ingredient-id)})))))

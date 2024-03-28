@@ -8,6 +8,8 @@
 (def recipe-id (atom nil))
 (def step-id (atom nil))
 
+(def ingredient-id (atom nil))
+
 (def recipe
   {:img       "https://images.pexels.com/photos/263168/pexels-photo-263168.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
    :prep-time 30
@@ -22,6 +24,15 @@
 
 (def update-step
   (assoc step :description "Updated First Step"))
+
+(def ingredient
+  {:sort 1
+   :name "Elbow noodles"
+   :amount 2
+   :measure "cups"})
+
+(def update-ingredient
+  (assoc ingredient :name "Romain Lettuce"))
 
 (deftest a-test
   (testing "List recipes"
@@ -71,6 +82,22 @@
                      :message "You need to be the recipe owner"
                      :type    "authorization-required"})))))
 
+  (testing "Ingredients"
+    (testing "Create"
+      (let [{:keys [status body]} (ts/test-endpoint :post (str "/v1/recipes/" @recipe-id "/ingredient")
+                                                    {:auth true :body ingredient})]
+        (reset! ingredient-id (:ingredient-id body))
+        (is (= status 201))))
+
+    (testing "Update"
+      (let [{:keys [status]} (ts/test-endpoint :put (str "/v1/recipes/" @recipe-id "/ingredient/" @ingredient-id)
+                                               {:auth true :body update-ingredient})]
+        (is (= status 204))))
+
+    (testing "Delete"
+      (let [{:keys [status]} (ts/test-endpoint :delete (str "/v1/recipes/" @recipe-id "/ingredient/" @ingredient-id)
+                                               {:auth true})]
+        (is (= status 204)))))
 
   (testing "Delete step"
     (let [{:keys [status]} (ts/test-endpoint :delete (str "/v1/recipes/" @recipe-id "/steps/" @step-id)

@@ -41,6 +41,7 @@
                  :responses  {204 {:body nil?}}
                  :summary    "Unfavorite recipe"}}]
       ["/steps"
+       {:swagger {:tags ["steps"]}}
        [""
         {:post {:handler    (recipe/create-step! db)
                 :middleware [[mw/wrap-recipe-owner db]]
@@ -56,4 +57,27 @@
           :delete {:handler (recipe/delete-step! db)
                    :middleware [[mw/wrap-recipe-owner db]]
                    :parameters {:path {:step-id string?}}
-                   :summary "Delete step"}}]]]]))
+                   :summary "Delete step"}}]]
+      ["/ingredient"
+       {:swagger {:tags ["ingredients"]}}
+       [""
+        {:post {:handler (recipe/create-ingredient! db)
+                :middleware [[mw/wrap-recipe-owner db]]
+                :parameters {:body {:sort number?
+                                    :name string?
+                                    :amount number?
+                                    :measure string?}}
+                :summary "Create ingredient"}}]
+       ["/:ingredient-id"
+        {:put {:handler (recipe/update-ingredient! db)
+               :middleware [[mw/wrap-recipe-owner db]]
+               :parameters {:path {:ingredient-id string?}
+                            :body {:sort    number?
+                                   :name    string?
+                                   :amount  number?
+                                   :measure string?}}
+               :summary "Update ingredient"}
+         :delete {:handler (recipe/delete-ingredient! db)
+                  :middleware [[mw/wrap-recipe-owner db]]
+                  :parameters {:path {:ingredient-id string?}}
+                  :summary "Delete ingredient"}}]]]]))
